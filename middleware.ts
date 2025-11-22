@@ -5,8 +5,13 @@ export function middleware(request: NextRequest) {
   // Get origin from request or default to localhost:5173
   const origin = request.headers.get("origin") || "http://localhost:5173";
 
-  // Allow both port 5173 and 5174
-  const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
+  // Allow local development and production origins
+  const allowedOrigins = [
+    "http://localhost:5173", 
+    "http://localhost:5174",
+    "https://tutor-client-git-main-oms-projects-51b74251.vercel.app",
+    "https://tutor-client.vercel.app" // Add your main domain if different
+  ];
 
   const isAllowedOrigin = allowedOrigins.includes(origin);
   const allowOrigin = isAllowedOrigin ? origin : allowedOrigins[0];
