@@ -10,7 +10,8 @@ export function middleware(request: NextRequest) {
     "http://localhost:5173",
     "http://localhost:5174",
     "https://tutor-client-git-main-oms-projects-51b74251.vercel.app",
-    "https://tutor-client.vercel.app", // Add your main domain if different
+    "https://tutor-client.vercel.app",
+    "https://tutor-client-three.vercel.app", // Current production URL
   ];
 
   const isAllowedOrigin = allowedOrigins.includes(origin);
