@@ -5,10 +5,10 @@ import { verifyToken } from "@/lib/jwt";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { chapterId: string } }
+  { params }: { params: Promise<{ chapterId: string }> }
 ) {
   try {
-    const { chapterId } = params;
+    const { chapterId } = await params;
 
     // Verify auth
     const authHeader = req.headers.get("authorization");

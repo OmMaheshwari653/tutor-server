@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
     // Step 3: Generate first chapter immediately (so user sees something)
     if (courseData.chapters.length > 0) {
       const firstChapter = courseData.chapters[0];
-      
+
       const chapterResult = await sql`
         INSERT INTO chapters (
           course_id, title, chapter_number, description, 
@@ -116,7 +116,9 @@ export async function POST(req: NextRequest) {
             chapter_id, topic_name, explanation, examples, practice_questions
           ) VALUES (
             ${firstChapterId}, ${topic.topicName}, ${topic.explanation},
-            ${JSON.stringify(topic.examples)}, ${JSON.stringify(topic.practiceQuestions)}
+            ${JSON.stringify(topic.examples)}, ${JSON.stringify(
+          topic.practiceQuestions
+        )}
           )
         `;
       }
@@ -182,7 +184,9 @@ async function processChaptersInBackground(
   }
 ) {
   try {
-    let completedChapters = params.startChapterNumber ? params.startChapterNumber - 1 : 0;
+    let completedChapters = params.startChapterNumber
+      ? params.startChapterNumber - 1
+      : 0;
 
     for (const chapter of chapters) {
       // Create chapter
