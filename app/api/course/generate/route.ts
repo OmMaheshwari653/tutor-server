@@ -73,14 +73,72 @@ export async function POST(req: NextRequest) {
 
     const course = courseResult[0];
 
-    // Step 3: Process chapters asynchronously in background
-    // Return immediately to user, continue processing in background
-    processChaptersInBackground(course.id, courseData.chapters, {
-      topic,
-      difficulty,
-      language,
-      includeVideos,
-    });
+    // Step 3: Generate first chapter immediately (so user sees something)
+    if (courseData.chapters.length > 0) {
+      const firstChapter = courseData.chapters[0];
+      
+      const chapterResult = await sql`
+        INSERT INTO chapters (
+          course_id, title, chapter_number, description, 
+          duration_minutes, content
+        ) VALUES (
+          ${course.id}, ${firstChapter.title}, ${firstChapter.chapterNumber},
+          ${firstChapter.description}, ${firstChapter.durationMinutes || 45},
+          ${JSON.stringify(firstChapter.topics)}
+        )
+        RETURNING id
+      `;
+
+      const firstChapterId = chapterResult[0].id;
+
+      // Generate AI notes for first chapter
+      try {
+        const aiNotes = await generateChapterNotes({
+          chapterTitle: firstChapter.title,
+          topic,
+          difficulty,
+          language,
+        });
+
+        await sql`
+          UPDATE chapters 
+          SET ai_generated_notes = ${aiNotes}
+          WHERE id = ${firstChapterId}
+        `;
+      } catch (error) {
+        // Continue even if notes generation fails
+      }
+
+      // Save topics for first chapter
+      for (const topic of firstChapter.topics) {
+        await sql`
+          INSERT INTO chapter_topics (
+            chapter_id, topic_name, explanation, examples, practice_questions
+          ) VALUES (
+            ${firstChapterId}, ${topic.topicName}, ${topic.explanation},
+            ${JSON.stringify(topic.examples)}, ${JSON.stringify(topic.practiceQuestions)}
+          )
+        `;
+      }
+    }
+
+    // Process remaining chapters in background
+    if (courseData.chapters.length > 1) {
+      processChaptersInBackground(course.id, courseData.chapters.slice(1), {
+        topic,
+        difficulty,
+        language,
+        includeVideos,
+        startChapterNumber: 2,
+      });
+    } else {
+      // Only one chapter, mark as ready
+      await sql`
+        UPDATE courses 
+        SET status = 'ready', progress = 100, completed_at = CURRENT_TIMESTAMP
+        WHERE id = ${course.id}
+      `;
+    }
 
     return NextResponse.json(
       {
@@ -120,10 +178,11 @@ async function processChaptersInBackground(
     difficulty: string;
     language: string;
     includeVideos: boolean;
+    startChapterNumber?: number;
   }
 ) {
   try {
-    let completedChapters = 0;
+    let completedChapters = params.startChapterNumber ? params.startChapterNumber - 1 : 0;
 
     for (const chapter of chapters) {
       // Create chapter

@@ -7,10 +7,10 @@ export function middleware(request: NextRequest) {
 
   // Allow local development and production origins
   const allowedOrigins = [
-    "http://localhost:5173", 
+    "http://localhost:5173",
     "http://localhost:5174",
     "https://tutor-client-git-main-oms-projects-51b74251.vercel.app",
-    "https://tutor-client.vercel.app" // Add your main domain if different
+    "https://tutor-client.vercel.app", // Add your main domain if different
   ];
 
   const isAllowedOrigin = allowedOrigins.includes(origin);
