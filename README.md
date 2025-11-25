@@ -1,73 +1,37 @@
-# 🔐 Authentication System with Next.js & Neon DB
+Tutor Website – Authentication Server (Backend)
 
-Complete authentication backend for TUTOR application.
+This is the backend server for the Tutor Website, built with Next.js App Router and Neon PostgreSQL. It handles authentication, user creation, database operations, and secure login for the tutor platform.
 
-## ✨ Features
+🚀 Tech Stack
 
-- **Next.js 15** with App Router
-- **Neon PostgreSQL** serverless database
-- **TypeScript** for type safety
-- **JWT Authentication** with 7-day expiration
-- **Bcrypt** password hashing (10 rounds)
-- **Zod** schema validation
-- **CORS** enabled for React client
+Next.js 15 (App Router)
 
-## 🚀 Quick Setup
+Neon PostgreSQL (Serverless DB)
 
-### 1. Configure Neon Database
+TypeScript
 
-1. Go to **[Neon Console](https://console.neon.tech)**
-2. Sign up (free tier available)
-3. Create a new project
-4. Copy your connection string
+JWT Authentication
 
-### 2. Update .env.local
+Bcrypt password hashing
 
-```env
-DATABASE_URL=your_neon_connection_string_here
-JWT_SECRET=your_secret_key
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
+Zod input validation
 
-### 3. Start Server
+CORS enabled for frontend
 
-```bash
-npm run dev
-```
+Serverless API Routes
 
-Server runs on: **http://localhost:3000**
+✨ Features
 
-## 📡 API Endpoints
+🔐 User Signup
 
-### POST `/api/auth/signup`
+🔑 User Login
 
-- Name (min 2 chars)
-- Email (valid format)
-- Password (min 6 chars)
+⚡ Fast serverless API routes
 
-### POST `/api/auth/signin`
+🗄 Neon PostgreSQL database integration
 
-- Email
-- Password
+🛡 Password hashing using bcrypt
 
-## 🔧 Integration with React Client
+📄 JWT Token (7 days expiry)
 
-**Terminal 1:**
-
-```bash
-cd auth-system
-npm run dev
-```
-
-**Terminal 2:**
-
-```bash
-cd ../client
-npm run dev
-```
-
-React client already configured to use this backend at `http://localhost:3000`.
-
----
-
-**Ready to use! Just add Neon DB credentials.** 🚀
+🧪 Validation using Zod
